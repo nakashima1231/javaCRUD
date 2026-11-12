@@ -5,7 +5,7 @@ import io.github.nakashima1231.lojaAPI.dto.ProdutoDTO.ProdutoResponseDTO;
 import io.github.nakashima1231.lojaAPI.entities.Produto;
 import io.github.nakashima1231.lojaAPI.repository.ProdutoRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +30,8 @@ public class ProdutoService {
         return new ProdutoResponseDTO(produto);
     }
 
-    public List<ProdutoResponseDTO> listarTudo() {
-        return repository.findAll().stream().map(ProdutoResponseDTO:: new).toList();
+    public List<ProdutoResponseDTO> listarTodos() {
+        return repository.findByAtivoTrue().stream().map(ProdutoResponseDTO:: new).toList();
     }
 
     public ProdutoResponseDTO buscarPorId(Long id) {
@@ -54,7 +54,7 @@ public class ProdutoService {
     @Transactional
     public void deletar(Long id) {
         Produto produto = buscarEntidade(id);
-        repository.delete(produto);
+        produto.setAtivo(false);
     }
 
 

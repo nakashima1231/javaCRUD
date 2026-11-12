@@ -18,11 +18,9 @@ public record VendedorRequestDTO(
         String matricula,
 
         @NotNull
-        @DecimalMin(value = "0.0", inclusive = false)
+        @DecimalMin(value = "0.0", inclusive = true)
         @DecimalMax(value = "100.0", inclusive = false)
         BigDecimal percentualComissao
 ) {
-    public VendedorRequestDTO(Vendedor v) {
-        this(v.getNome(), v.getEmail(), v.getMatricula(), v.getPercentualComissao());
-    }
+
 }

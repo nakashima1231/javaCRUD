@@ -2,14 +2,11 @@ package io.github.nakashima1231.lojaAPI.service;
 
 import io.github.nakashima1231.lojaAPI.dto.ClienteDTO.ClienteRequestDTO;
 import io.github.nakashima1231.lojaAPI.dto.ClienteDTO.ClienteResponseDTO;
-import io.github.nakashima1231.lojaAPI.dto.ProdutoDTO.ProdutoResponseDTO;
 import io.github.nakashima1231.lojaAPI.entities.Cliente;
 import io.github.nakashima1231.lojaAPI.exceptions.ClienteNotFoundException;
 import io.github.nakashima1231.lojaAPI.repository.ClienteRepository;
 import io.github.nakashima1231.lojaAPI.util.CpfValidator;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
-import lombok.NoArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +25,6 @@ public class ClienteService {
     }
 
 
-
     public List<ClienteResponseDTO> listarTodos() {
         return repository.findAll().stream().map(ClienteResponseDTO:: new).toList();
     }
@@ -40,8 +36,8 @@ public class ClienteService {
 
     //post
     @Transactional
-    public ClienteResponseDTO criar(ClienteRequestDTO dados) {
-        if(CpfValidator.validarCpf(dados.cpf())) {
+    public ClienteResponseDTO criarCliente(ClienteRequestDTO dados) {
+        if(!CpfValidator.validarCpf(dados.cpf())) {
             throw new RuntimeException("CPF invalido");
         }
 
@@ -69,6 +65,16 @@ public class ClienteService {
     //put
     @Transactional
     public ClienteResponseDTO atualizar(ClienteRequestDTO dados, Long id) {
+
+        if(!CpfValidator.validarCpf(dados.cpf())) {
+            throw new RuntimeException("CPF invalido");
+        }
+
+        if(repository.existsByCpfAndIdNot(dados.cpf(), id)) {
+            throw new RuntimeException("Ja existe um cliente com este cpf");
+        }
+
+
         Cliente cliente = buscarEntidade(id);
         cliente.setNome(dados.nome());
         cliente.setCpf(dados.cpf());

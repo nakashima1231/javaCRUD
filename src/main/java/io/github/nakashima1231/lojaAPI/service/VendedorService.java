@@ -4,7 +4,7 @@ import io.github.nakashima1231.lojaAPI.dto.Vendedor.VendedorRequestDTO;
 import io.github.nakashima1231.lojaAPI.dto.Vendedor.VendedorResponseDTO;
 import io.github.nakashima1231.lojaAPI.entities.Vendedor;
 import io.github.nakashima1231.lojaAPI.repository.VendedorRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +20,7 @@ public class VendedorService {
     }
 
     public List<VendedorResponseDTO> listarTodos() {
-        return repository.findAll().stream().map(VendedorResponseDTO::new).toList();
+        return repository.findByAtivoTrue().stream().map(VendedorResponseDTO::new).toList();
     }
 
     public VendedorResponseDTO buscarPorId(Long id) {
@@ -29,7 +29,7 @@ public class VendedorService {
     }
 
     @Transactional
-    public VendedorResponseDTO criar(VendedorRequestDTO dados) {
+    public VendedorResponseDTO criarVendedor(VendedorRequestDTO dados) {
         if(repository.existsByEmail(dados.email())) {
             throw new RuntimeException("Ja existe um vendedor com este email!");
         }
@@ -63,9 +63,9 @@ public class VendedorService {
     }
 
     @Transactional
-    public void excluir(Long id) {
+    public void deletar(Long id) {
         Vendedor vendedor = buscarEntidade(id);
-        repository.delete(vendedor);
+        vendedor.setAtivo(false);
     }
 
 

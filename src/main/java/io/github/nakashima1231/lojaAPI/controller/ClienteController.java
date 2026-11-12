@@ -5,10 +5,10 @@ import io.github.nakashima1231.lojaAPI.dto.ClienteDTO.ClienteResponseDTO;
 import io.github.nakashima1231.lojaAPI.service.ClienteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.List;
 
 @RestController
@@ -29,8 +29,9 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ClienteResponseDTO criar(@RequestBody @Valid ClienteRequestDTO dados) {
-        return service.criar(dados);
+    public ResponseEntity<ClienteResponseDTO> criar(@RequestBody @Valid ClienteRequestDTO dados) {
+        ClienteResponseDTO cliente = service.criarCliente(dados);
+        return ResponseEntity.status(HttpStatus.CREATED).body(cliente);
     }
 
     @PutMapping("/{id}")

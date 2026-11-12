@@ -30,7 +30,7 @@ public class VendedorController {
 
     @PostMapping
     public VendedorResponseDTO criar(@RequestBody @Valid VendedorRequestDTO dados) {
-        return service.criar(dados);
+        return service.criarVendedor(dados);
     }
 
     @PutMapping("/{id}")
@@ -40,7 +40,7 @@ public class VendedorController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        service.excluir(id);
+        service.deletar(id);
         return ResponseEntity.noContent().build(); // Retorna Status 204
     }
 

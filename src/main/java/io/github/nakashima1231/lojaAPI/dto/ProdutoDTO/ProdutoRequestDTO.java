@@ -20,8 +20,5 @@ public record ProdutoRequestDTO(
         @PositiveOrZero
         Integer quantidadeEstoque
 ) {
-    public ProdutoRequestDTO(Produto p) {
-        this(p.getNome(), p.getDescricao(), p.getPreco(), p.getQuantidadeEstoque());
 
-    }
 }

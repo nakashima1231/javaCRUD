@@ -20,7 +20,5 @@ public record ClienteRequestDTO(
 
         String telefone
 ) {
-    public ClienteRequestDTO(Cliente c) {
-        this(c.getNome(), c.getCpf(), c.getEmail(), c.getTelefone());
-    }
+
 }
