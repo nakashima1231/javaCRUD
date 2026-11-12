@@ -1,0 +1,27 @@
+package io.github.nakashima1231.lojaAPI.dto.ProdutoDTO;
+
+import io.github.nakashima1231.lojaAPI.entities.Produto;
+import jakarta.validation.constraints.*;
+
+import java.math.BigDecimal;
+
+public record ProdutoRequestDTO(
+        @NotBlank
+        @Size(max = 100)
+        String nome,
+
+        String descricao,
+
+        @NotNull
+        @DecimalMin(value = "0.0", inclusive = false)
+        BigDecimal preco,
+
+        @NotNull
+        @PositiveOrZero
+        Integer quantidadeEstoque
+) {
+    public ProdutoRequestDTO(Produto p) {
+        this(p.getNome(), p.getDescricao(), p.getPreco(), p.getQuantidadeEstoque());
+
+    }
+}
