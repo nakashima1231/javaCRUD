@@ -4,7 +4,6 @@ import io.github.nakashima1231.lojaAPI.dto.Vendedor.VendedorRequestDTO;
 import io.github.nakashima1231.lojaAPI.dto.Vendedor.VendedorResponseDTO;
 import io.github.nakashima1231.lojaAPI.service.VendedorService;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

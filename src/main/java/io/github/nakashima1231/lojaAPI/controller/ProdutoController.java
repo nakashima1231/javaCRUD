@@ -1,7 +1,5 @@
 package io.github.nakashima1231.lojaAPI.controller;
 
-import io.github.nakashima1231.lojaAPI.dto.ClienteDTO.ClienteRequestDTO;
-import io.github.nakashima1231.lojaAPI.dto.ClienteDTO.ClienteResponseDTO;
 import io.github.nakashima1231.lojaAPI.dto.ProdutoDTO.ProdutoRequestDTO;
 import io.github.nakashima1231.lojaAPI.dto.ProdutoDTO.ProdutoResponseDTO;
 import io.github.nakashima1231.lojaAPI.service.ProdutoService;

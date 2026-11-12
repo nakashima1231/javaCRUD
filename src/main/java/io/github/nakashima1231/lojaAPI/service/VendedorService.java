@@ -24,8 +24,7 @@ public class VendedorService {
     }
 
     public VendedorResponseDTO buscarPorId(Long id) {
-        Vendedor vendedor = buscarEntidade(id);
-        return new VendedorResponseDTO(vendedor);
+        return repository.findByIdAndAtivoTrue(id).map(VendedorResponseDTO::new).orElseThrow(() -> new RuntimeException("Nao existe um vendedor com este id: " + id));
     }
 
     @Transactional
@@ -52,6 +51,8 @@ public class VendedorService {
 
     @Transactional
     public VendedorResponseDTO atualizar(VendedorRequestDTO dados, Long id) {
+        Vendedor vendedor = buscarEntidade(id);
+
         if(repository.existsByEmailAndIdNot(dados.email(), id)) {
             throw new RuntimeException("Ja existe um vendedor com este email!");
         }
@@ -59,8 +60,6 @@ public class VendedorService {
         if(repository.existsByMatriculaAndIdNot(dados.matricula(), id)) {
             throw new RuntimeException("Ja existe um vendedor com esta matricula!");
         }
-
-        Vendedor vendedor = buscarEntidade(id);
 
         vendedor.setNome(dados.nome());
         vendedor.setEmail(dados.email());

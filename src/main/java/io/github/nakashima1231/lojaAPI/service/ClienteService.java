@@ -26,12 +26,11 @@ public class ClienteService {
 
 
     public List<ClienteResponseDTO> listarTodos() {
-        return repository.findAll().stream().map(ClienteResponseDTO:: new).toList();
+        return repository.findByAtivoTrue().stream().map(ClienteResponseDTO:: new).toList();
     }
 
     public ClienteResponseDTO buscarPorId(Long id) {
-        Cliente cliente = buscarEntidade(id);
-        return new ClienteResponseDTO(cliente);
+        return repository.findByIdAndAtivoTrue(id).map(ClienteResponseDTO:: new).orElseThrow(() -> new ClienteNotFoundException(id));
     }
 
     //post
@@ -83,7 +82,6 @@ public class ClienteService {
         cliente.setCpf(dados.cpf());
         cliente.setEmail(dados.email());
         cliente.setTelefone(dados.telefone());
-        cliente.setAtivo(dados.ativo());
 
         return new ClienteResponseDTO(cliente);
     }
