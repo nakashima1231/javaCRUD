@@ -5,7 +5,7 @@ import io.github.nakashima1231.lojaAPI.entities.Produto;
 import java.math.BigDecimal;
 
 public record ProdutoResponseDTO(
-         long id,
+         Long id,
          String nome,
          String descricao,
          BigDecimal preco,

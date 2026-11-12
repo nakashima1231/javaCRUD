@@ -49,13 +49,13 @@ public class ClienteService {
             throw new RuntimeException("Ja existe um cliente com este email");
         }
 
-
         Cliente novo = new Cliente();
         novo.setNome(dados.nome());
         novo.setCpf(dados.cpf());
         novo.setEmail(dados.email());
         novo.setTelefone(dados.telefone());
         novo.setDataCadastro(LocalDateTime.now());
+        novo.setAtivo(true);
 
         repository.save(novo);
 
@@ -65,21 +65,25 @@ public class ClienteService {
     //put
     @Transactional
     public ClienteResponseDTO atualizar(ClienteRequestDTO dados, Long id) {
+        Cliente cliente = buscarEntidade(id);
 
         if(!CpfValidator.validarCpf(dados.cpf())) {
             throw new RuntimeException("CPF invalido");
+        }
+
+        if(repository.existsByEmailAndIdNot(dados.email(), id)) {
+            throw new RuntimeException("Ja existe um cliente com este email");
         }
 
         if(repository.existsByCpfAndIdNot(dados.cpf(), id)) {
             throw new RuntimeException("Ja existe um cliente com este cpf");
         }
 
-
-        Cliente cliente = buscarEntidade(id);
         cliente.setNome(dados.nome());
         cliente.setCpf(dados.cpf());
         cliente.setEmail(dados.email());
         cliente.setTelefone(dados.telefone());
+        cliente.setAtivo(dados.ativo());
 
         return new ClienteResponseDTO(cliente);
     }
@@ -88,7 +92,7 @@ public class ClienteService {
     @Transactional
     public void deletar(Long id) {
         Cliente cliente = buscarEntidade(id);
-        repository.delete(cliente);
+        cliente.setAtivo(false);
     }
 
 

@@ -18,7 +18,9 @@ public record ClienteRequestDTO(
         @Email
         String email,
 
-        String telefone
+        String telefone,
+
+        boolean ativo
 ) {
 
 }

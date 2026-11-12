@@ -35,8 +35,7 @@ public class ProdutoService {
     }
 
     public ProdutoResponseDTO buscarPorId(Long id) {
-        Produto produto = buscarEntidade(id);
-        return new ProdutoResponseDTO(produto);
+        return repository.findByIdAndAtivoTrue(id).map(ProdutoResponseDTO::new) .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado com o ID: " + id));
     }
 
     @Transactional

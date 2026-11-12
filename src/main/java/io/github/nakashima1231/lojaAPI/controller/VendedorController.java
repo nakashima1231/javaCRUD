@@ -6,6 +6,7 @@ import io.github.nakashima1231.lojaAPI.service.VendedorService;
 import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +30,9 @@ public class VendedorController {
     }
 
     @PostMapping
-    public VendedorResponseDTO criar(@RequestBody @Valid VendedorRequestDTO dados) {
-        return service.criarVendedor(dados);
+    public ResponseEntity<VendedorResponseDTO> criar(@RequestBody @Valid VendedorRequestDTO dados) {
+        VendedorResponseDTO vendedor = service.criarVendedor(dados);
+        return ResponseEntity.status(HttpStatus.CREATED).body(vendedor);
     }
 
     @PutMapping("/{id}")

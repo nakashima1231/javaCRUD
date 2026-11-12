@@ -11,12 +11,16 @@ import java.time.LocalDateTime;
 public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     private String nome;
     @Column(nullable = false, unique = true)
     private String cpf;
+
+    @Column(unique = true)
     private String email;
+
     private String telefone;
     private LocalDateTime dataCadastro;
+    private boolean ativo;
 }

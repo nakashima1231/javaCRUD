@@ -52,6 +52,14 @@ public class VendedorService {
 
     @Transactional
     public VendedorResponseDTO atualizar(VendedorRequestDTO dados, Long id) {
+        if(repository.existsByEmailAndIdNot(dados.email(), id)) {
+            throw new RuntimeException("Ja existe um vendedor com este email!");
+        }
+
+        if(repository.existsByMatriculaAndIdNot(dados.matricula(), id)) {
+            throw new RuntimeException("Ja existe um vendedor com esta matricula!");
+        }
+
         Vendedor vendedor = buscarEntidade(id);
 
         vendedor.setNome(dados.nome());

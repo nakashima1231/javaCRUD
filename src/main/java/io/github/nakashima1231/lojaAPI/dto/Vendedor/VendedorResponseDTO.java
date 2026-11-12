@@ -5,7 +5,7 @@ import io.github.nakashima1231.lojaAPI.entities.Vendedor;
 import java.math.BigDecimal;
 
 public record VendedorResponseDTO(
-        long id,
+        Long id,
         String nome,
         String email,
         String matricula,
