@@ -1,6 +1,5 @@
 package io.github.nakashima1231.lojaAPI.dto.Vendedor;
 
-import io.github.nakashima1231.lojaAPI.entities.Vendedor;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;

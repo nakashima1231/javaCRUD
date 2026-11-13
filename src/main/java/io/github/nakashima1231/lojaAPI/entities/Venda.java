@@ -19,8 +19,12 @@ public class Venda {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
     private Cliente cliente;
+
+    @OneToMany(mappedBy = "vendedor", cascade = CascadeType.ALL)
     private Vendedor vendedor;
+
     private LocalDateTime dataVenda;
     private BigDecimal valorTotal;
 

@@ -1,24 +1,17 @@
 package io.github.nakashima1231.lojaAPI.dto.Venda;
 
-import io.github.nakashima1231.lojaAPI.entities.Cliente;
-import io.github.nakashima1231.lojaAPI.entities.Produto;
-import io.github.nakashima1231.lojaAPI.util.Status;
-import jakarta.persistence.*;
+import io.github.nakashima1231.lojaAPI.dto.ItemVenda.ItemRequestDTO;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public record VendaRequestDTO(
-        @NotNull
-        Cliente cliente,
-
-        @NotNull
-        BigDecimal valorTotal,
+        Long clienteId,
+        Long vendedorId,
 
         @NotEmpty
-        List<Produto> itens
+        @Valid
+        List<ItemRequestDTO> itens
 ) {
 }

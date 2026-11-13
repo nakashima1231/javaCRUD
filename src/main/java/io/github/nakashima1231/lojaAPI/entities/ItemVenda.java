@@ -18,10 +18,11 @@ public class ItemVenda {
     @JoinColumn(name = "id_venda", nullable = false)
     private Venda venda;
 
-
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_produto", nullable = false)
     private Produto produto;
     private int quantidade;
+
     private BigDecimal precoUnitario;
 
 }

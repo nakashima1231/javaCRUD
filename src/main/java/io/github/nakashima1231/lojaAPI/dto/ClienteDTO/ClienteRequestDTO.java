@@ -1,8 +1,7 @@
 package io.github.nakashima1231.lojaAPI.dto.ClienteDTO;
 
-import io.github.nakashima1231.lojaAPI.entities.Cliente;
 import jakarta.validation.constraints.*;
-import org.hibernate.validator.constraints.UniqueElements;
+
 
 public record ClienteRequestDTO(
         @NotBlank
