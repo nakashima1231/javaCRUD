@@ -25,4 +25,10 @@ public class Produto {
     private boolean ativo;
 
 
+    public void baixarEstoque(int quantidade) {
+        if (this.quantidadeEstoque < quantidade) {
+            throw new RuntimeException("Estoque insuficiente para o produto: " + this.nome);
+        }
+        this.quantidadeEstoque -= quantidade;
+    }
 }

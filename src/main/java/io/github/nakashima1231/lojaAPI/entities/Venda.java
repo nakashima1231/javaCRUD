@@ -19,10 +19,12 @@ public class Venda {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_cliente", nullable = false)
     private Cliente cliente;
 
-    @OneToMany(mappedBy = "vendedor", cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_vendedor", nullable = false)
     private Vendedor vendedor;
 
     private LocalDateTime dataVenda;

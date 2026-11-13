@@ -1,0 +1,74 @@
+package io.github.nakashima1231.lojaAPI.service;
+
+import io.github.nakashima1231.lojaAPI.dto.ItemVenda.ItemRequestDTO;
+import io.github.nakashima1231.lojaAPI.dto.Venda.VendaRequestDTO;
+import io.github.nakashima1231.lojaAPI.dto.Venda.VendaResponseDTO;
+import io.github.nakashima1231.lojaAPI.entities.*;
+import io.github.nakashima1231.lojaAPI.repository.ClienteRepository;
+import io.github.nakashima1231.lojaAPI.repository.ProdutoRepository;
+import io.github.nakashima1231.lojaAPI.repository.VendaRepository;
+import io.github.nakashima1231.lojaAPI.repository.VendedorRepository;
+import io.github.nakashima1231.lojaAPI.util.Status;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Service
+@RequiredArgsConstructor
+public class VendaService {
+    private final VendaRepository repository;
+    private final ClienteRepository clienteRepository;
+    private final VendedorRepository vendedorRepository;
+    private final ProdutoRepository produtoRepository;
+
+
+    @Transactional
+    public VendaResponseDTO criarVenda(VendaRequestDTO dados) {
+        // 1. VALIDAR (e já buscar)
+        Cliente cliente = clienteRepository.findByIdAndAtivoTrue(dados.clienteId())
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado ou inativo: " + dados.clienteId()));
+
+        Vendedor vendedor = vendedorRepository.findByIdAndAtivoTrue(dados.vendedorId())
+                .orElseThrow(() -> new RuntimeException("Vendedor não encontrado ou inativo: " + dados.clienteId()));
+
+        Venda venda = new Venda();
+        venda.setCliente(cliente);
+        venda.setVendedor(vendedor);
+        venda.setDataVenda(LocalDateTime.now());
+        venda.setStatus(Status.FINALIZADA);
+
+        // 2. CALCULAR total
+        for (ItemRequestDTO itemDTO : dados.itens()) {
+            Produto produto = produtoRepository.findByIdAndAtivoTrue(itemDTO.produtoId())
+                    .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado: " + itemDTO.produtoId()));
+
+            ItemVenda item = new ItemVenda();
+            item.setProduto(produto);
+            item.setQuantidade(itemDTO.quantidade());
+            item.setPrecoUnitario(produto.getPreco());
+
+            item.setVenda(venda);
+            venda.getItens().add(item);
+        }
+
+        BigDecimal total = venda.getItens().stream()
+                .map(item -> item.getPrecoUnitario()
+                        .multiply(BigDecimal.valueOf(item.getQuantidade())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        venda.setValorTotal(total);
+        // 3. BAIXAR ESTOQUE
+        for (ItemVenda item : venda.getItens()) {
+            item.getProduto().baixarEstoque(item.getQuantidade());
+        }
+
+
+        // 4. SALVAR
+        repository.save(venda);
+        return new VendaResponseDTO(venda);
+    }
+}
