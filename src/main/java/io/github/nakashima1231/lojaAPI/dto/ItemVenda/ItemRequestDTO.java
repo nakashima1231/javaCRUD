@@ -20,10 +20,6 @@ public record ItemRequestDTO(
 
         @NotNull
         @PositiveOrZero
-        Integer quantidade,
-
-        @NotNull
-        @DecimalMin(value = "0.0", inclusive = false)
-        BigDecimal precoUnitario
+        Integer quantidade
 ) {
 }
