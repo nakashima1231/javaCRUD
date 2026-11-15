@@ -1,10 +1,7 @@
 package io.github.nakashima1231.lojaAPI.entities;
 
 import io.github.nakashima1231.lojaAPI.exceptions.RegraNegocioException;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,10 +17,11 @@ public class Produto {
     private Long id;
 
     private String nome;
-    private String descricao;
     private BigDecimal preco;
     private boolean ativo;
     private int quantidadeEstoque;
+    @Column(length = 250)
+    private String descricao;
 
     public void baixarEstoque(int quantidade) {
         estoqueNegativo(quantidade);

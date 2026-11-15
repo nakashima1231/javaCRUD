@@ -5,9 +5,11 @@ import io.github.nakashima1231.lojaAPI.dto.ErroResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import tools.jackson.databind.exc.MismatchedInputException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,6 +29,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(erro);
     }
 
+    private ResponseEntity<ErroResponseDTO> montarErro(HttpStatus status, String mensagem) {
+        ErroResponseDTO erro = new ErroResponseDTO(status.value(), mensagem, LocalDateTime.now());
+        return ResponseEntity.status(status).body(erro);
+    }
+
+
     @ExceptionHandler(RecursoNaoEncontradoException.class)
     public ResponseEntity<ErroResponseDTO> tratarNaoEncontrado(RecursoNaoEncontradoException ex) {
         return montarErro(HttpStatus.NOT_FOUND, ex.getMessage());
@@ -43,16 +51,25 @@ public class GlobalExceptionHandler {
         return montarErro(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
     }
 
-    private ResponseEntity<ErroResponseDTO> montarErro(HttpStatus status, String mensagem) {
-        ErroResponseDTO erro = new ErroResponseDTO(status.value(), mensagem, LocalDateTime.now());
-        return ResponseEntity.status(status).body(erro);
-    }
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErroResponseDTO> tratarErroInesperado(Exception ex) {
         log.error("Erro inesperado", ex);
         return montarErro(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor");
     }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErroResponseDTO> tratarJsonInvalido(HttpMessageNotReadableException ex) {
+        if (ex.getCause() instanceof MismatchedInputException mie && !mie.getPath().isEmpty()) {
+            String campo = mie.getPath().getLast().getPropertyName();
+            String tipo = mie.getTargetType() != null ? mie.getTargetType().getSimpleName() : "desconhecido";
+
+            return montarErro(HttpStatus.BAD_REQUEST,
+                    "Campo '" + campo + "' com tipo inválido. Esperado: " + tipo);
+        }
+        return montarErro(HttpStatus.BAD_REQUEST, "JSON mal formatado");
+    }
+
+
 
 
 
