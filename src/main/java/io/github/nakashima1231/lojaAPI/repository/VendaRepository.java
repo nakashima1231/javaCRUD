@@ -8,7 +8,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface VendaRepository extends JpaRepository<Venda, Long> {
-    boolean findByCliente_IdAndCliente_AtivoTrue(Long id);
-
-    boolean findByVendedor_IdAndVendedor_AtivoTrue(Long id);
 }

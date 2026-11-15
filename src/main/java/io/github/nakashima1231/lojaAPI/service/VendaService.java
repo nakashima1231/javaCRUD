@@ -3,6 +3,8 @@ package io.github.nakashima1231.lojaAPI.service;
 import io.github.nakashima1231.lojaAPI.dto.ItemVenda.ItemRequestDTO;
 import io.github.nakashima1231.lojaAPI.dto.Venda.VendaRequestDTO;
 import io.github.nakashima1231.lojaAPI.dto.Venda.VendaResponseDTO;
+import io.github.nakashima1231.lojaAPI.dto.Vendedor.VendedorRequestDTO;
+import io.github.nakashima1231.lojaAPI.dto.Vendedor.VendedorResponseDTO;
 import io.github.nakashima1231.lojaAPI.entities.*;
 import io.github.nakashima1231.lojaAPI.repository.ClienteRepository;
 import io.github.nakashima1231.lojaAPI.repository.ProdutoRepository;
@@ -10,12 +12,14 @@ import io.github.nakashima1231.lojaAPI.repository.VendaRepository;
 import io.github.nakashima1231.lojaAPI.repository.VendedorRepository;
 import io.github.nakashima1231.lojaAPI.util.Status;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -29,11 +33,9 @@ public class VendaService {
     @Transactional
     public VendaResponseDTO criarVenda(VendaRequestDTO dados) {
         // 1. VALIDAR (e já buscar)
-        Cliente cliente = clienteRepository.findByIdAndAtivoTrue(dados.clienteId())
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado ou inativo: " + dados.clienteId()));
+        Cliente cliente = buscarClienteAtivo(dados.clienteId());
 
-        Vendedor vendedor = vendedorRepository.findByIdAndAtivoTrue(dados.vendedorId())
-                .orElseThrow(() -> new RuntimeException("Vendedor não encontrado ou inativo: " + dados.clienteId()));
+        Vendedor vendedor = buscarVendedorAtivo(dados.vendedorId());
 
         Venda venda = new Venda();
         venda.setCliente(cliente);
@@ -71,4 +73,52 @@ public class VendaService {
         repository.save(venda);
         return new VendaResponseDTO(venda);
     }
+
+    public List<VendaResponseDTO> listarTodos() {
+        return repository.findAll().stream().map(VendaResponseDTO::new).toList();
+    }
+
+    public VendaResponseDTO buscarPorId(Long id) {
+        return repository.findById(id).map(VendaResponseDTO::new).orElseThrow(null);
+    }
+
+    public void deletar(Long id) {
+        Venda venda = buscarEntidade(id);
+        venda.setStatus(Status.CANCELADA);
+    }
+
+    private Venda buscarEntidade(Long id) {
+        return repository.findById(id).orElseThrow(() -> new RuntimeException("Nao existe uma venda com este id: " + id));
+    }
+
+    @Transactional
+    public VendaResponseDTO atualizar(VendaRequestDTO dados, Long id) {
+        Venda venda = buscarEntidade(id);
+
+        Cliente cliente = buscarClienteAtivo(dados.clienteId());
+
+        Vendedor vendedor = buscarVendedorAtivo(dados.vendedorId());
+
+
+        venda.setCliente(cliente);
+        venda.setVendedor(vendedor);
+        venda.setItens(dados.itens());
+
+        return new VendaResponseDTO(venda);
+    }
+
+    private Cliente buscarClienteAtivo(Long id) {
+        return clienteRepository.findByIdAndAtivoTrue(id).orElseThrow(() -> new RuntimeException("Cliente não encontrado ou inativo: " + id));
+    }
+
+    private Vendedor buscarVendedorAtivo(Long id) {
+        return vendedorRepository.findByIdAndAtivoTrue(id).orElseThrow(() -> new RuntimeException("Vendedor não encontrado ou inativo: " + id));
+    }
+
+
+    private calcularItens()
+
+
+
+
 }
