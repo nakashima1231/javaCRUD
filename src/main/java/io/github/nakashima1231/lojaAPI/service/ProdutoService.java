@@ -3,6 +3,7 @@ package io.github.nakashima1231.lojaAPI.service;
 import io.github.nakashima1231.lojaAPI.dto.ProdutoDTO.ProdutoRequestDTO;
 import io.github.nakashima1231.lojaAPI.dto.ProdutoDTO.ProdutoResponseDTO;
 import io.github.nakashima1231.lojaAPI.entities.Produto;
+import io.github.nakashima1231.lojaAPI.exceptions.*;
 import io.github.nakashima1231.lojaAPI.repository.ProdutoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +36,7 @@ public class ProdutoService {
     }
 
     public ProdutoResponseDTO buscarPorId(Long id) {
-        return repository.findByIdAndAtivoTrue(id).map(ProdutoResponseDTO::new) .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado com o ID: " + id));
+        return repository.findByIdAndAtivoTrue(id).map(ProdutoResponseDTO::new) .orElseThrow(() -> new RecursoNaoEncontradoException("Produto não encontrado com o ID: " + id));
     }
 
     @Transactional
@@ -58,7 +59,7 @@ public class ProdutoService {
 
 
     private Produto buscarEntidade(Long id) {
-        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Produto nao encontrado com o id " + id));
+        return repository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Produto nao encontrado com o id " + id));
     }
 
 }

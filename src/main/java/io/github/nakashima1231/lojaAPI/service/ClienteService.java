@@ -3,7 +3,7 @@ package io.github.nakashima1231.lojaAPI.service;
 import io.github.nakashima1231.lojaAPI.dto.ClienteDTO.ClienteRequestDTO;
 import io.github.nakashima1231.lojaAPI.dto.ClienteDTO.ClienteResponseDTO;
 import io.github.nakashima1231.lojaAPI.entities.Cliente;
-import io.github.nakashima1231.lojaAPI.exceptions.ClienteNotFoundException;
+import io.github.nakashima1231.lojaAPI.exceptions.*;
 import io.github.nakashima1231.lojaAPI.repository.ClienteRepository;
 import io.github.nakashima1231.lojaAPI.util.CpfValidator;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +20,7 @@ public class ClienteService {
 
     //get privado
     private Cliente buscarEntidade(Long id) {
-        Cliente cliente = repository.findById(id).orElseThrow(() -> new ClienteNotFoundException(id));
+        Cliente cliente = repository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Nao existe um cliente com este id: " + id));
         return cliente;
     }
 
@@ -30,22 +30,22 @@ public class ClienteService {
     }
 
     public ClienteResponseDTO buscarPorId(Long id) {
-        return repository.findByIdAndAtivoTrue(id).map(ClienteResponseDTO:: new).orElseThrow(() -> new ClienteNotFoundException(id));
+        return repository.findByIdAndAtivoTrue(id).map(ClienteResponseDTO:: new).orElseThrow(() -> new RecursoNaoEncontradoException("Nao existe um cliente com este id: " + id));
     }
 
     //post
     @Transactional
     public ClienteResponseDTO criarCliente(ClienteRequestDTO dados) {
         if(!CpfValidator.validarCpf(dados.cpf())) {
-            throw new RuntimeException("CPF invalido");
+            throw new RegraNegocioException("CPF invalido");
         }
 
         if(repository.existsByCpf(dados.cpf())) {
-            throw new RuntimeException("Ja existe um cliente com este cpf");
+            throw new ConflitoException("Ja existe um cliente com este cpf");
         }
 
         if(repository.existsByEmail(dados.email())) {
-            throw new RuntimeException("Ja existe um cliente com este email");
+            throw new ConflitoException("Ja existe um cliente com este email");
         }
 
         Cliente novo = new Cliente();
@@ -67,15 +67,15 @@ public class ClienteService {
         Cliente cliente = buscarEntidade(id);
 
         if(!CpfValidator.validarCpf(dados.cpf())) {
-            throw new RuntimeException("CPF invalido");
+            throw new RegraNegocioException("CPF invalido");
         }
 
         if(repository.existsByEmailAndIdNot(dados.email(), id)) {
-            throw new RuntimeException("Ja existe um cliente com este email");
+            throw new ConflitoException("Ja existe um cliente com este email");
         }
 
         if(repository.existsByCpfAndIdNot(dados.cpf(), id)) {
-            throw new RuntimeException("Ja existe um cliente com este cpf");
+            throw new ConflitoException("Ja existe um cliente com este cpf");
         }
 
         cliente.setNome(dados.nome());

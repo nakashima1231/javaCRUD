@@ -1,5 +1,6 @@
 package io.github.nakashima1231.lojaAPI.entities;
 
+import io.github.nakashima1231.lojaAPI.exceptions.RecursoNaoEncontradoException;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,7 +29,7 @@ public class Produto {
         estoqueNegativo(quantidade);
 
         if (this.quantidadeEstoque < quantidade) {
-            throw new RuntimeException("Estoque insuficiente para o produto: " + this.nome);
+            throw new RecursoNaoEncontradoException("Estoque insuficiente para o produto: " + this.nome);
         }
         this.quantidadeEstoque -= quantidade;
     }

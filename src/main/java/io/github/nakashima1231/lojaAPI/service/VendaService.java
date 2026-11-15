@@ -4,6 +4,7 @@ import io.github.nakashima1231.lojaAPI.dto.ItemVenda.ItemRequestDTO;
 import io.github.nakashima1231.lojaAPI.dto.Venda.VendaRequestDTO;
 import io.github.nakashima1231.lojaAPI.dto.Venda.VendaResponseDTO;
 import io.github.nakashima1231.lojaAPI.entities.*;
+import io.github.nakashima1231.lojaAPI.exceptions.*;
 import io.github.nakashima1231.lojaAPI.repository.ClienteRepository;
 import io.github.nakashima1231.lojaAPI.repository.ProdutoRepository;
 import io.github.nakashima1231.lojaAPI.repository.VendaRepository;
@@ -29,7 +30,7 @@ public class VendaService {
     private void adicionarItens(Venda venda, List<ItemRequestDTO> itensDTO) {
         for (ItemRequestDTO itemDTO : itensDTO) {
             Produto produto = produtoRepository.findByIdAndAtivoTrue(itemDTO.produtoId())
-                    .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado: " + itemDTO.produtoId()));
+                    .orElseThrow(() -> new RecursoNaoEncontradoException("Produto não encontrado: " + itemDTO.produtoId()));
 
             ItemVenda item = new ItemVenda();
             item.setProduto(produto);
@@ -95,7 +96,7 @@ public class VendaService {
         Venda venda = buscarEntidade(id);
 
         if (venda.getStatus() == Status.CANCELADA) {
-            throw new RuntimeException("Venda já está cancelada");
+            throw new RegraNegocioException("Venda já está cancelada");
         }
 
         for (ItemVenda item : venda.getItens()) {
@@ -105,16 +106,16 @@ public class VendaService {
     }
 
     private Venda buscarEntidade(Long id) {
-        return repository.findById(id).orElseThrow(() -> new RuntimeException("Nao existe uma venda com este id: " + id));
+        return repository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Nao existe uma venda com este id: " + id));
     }
 
 
     private Cliente buscarClienteAtivo(Long id) {
-        return clienteRepository.findByIdAndAtivoTrue(id).orElseThrow(() -> new RuntimeException("Cliente não encontrado ou inativo: " + id));
+        return clienteRepository.findByIdAndAtivoTrue(id).orElseThrow(() -> new RecursoNaoEncontradoException("Cliente não encontrado ou inativo: " + id));
     }
 
     private Vendedor buscarVendedorAtivo(Long id) {
-        return vendedorRepository.findByIdAndAtivoTrue(id).orElseThrow(() -> new RuntimeException("Vendedor não encontrado ou inativo: " + id));
+        return vendedorRepository.findByIdAndAtivoTrue(id).orElseThrow(() -> new RecursoNaoEncontradoException("Vendedor não encontrado ou inativo: " + id));
     }
 
 

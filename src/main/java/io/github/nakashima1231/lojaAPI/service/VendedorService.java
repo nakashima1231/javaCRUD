@@ -3,6 +3,7 @@ package io.github.nakashima1231.lojaAPI.service;
 import io.github.nakashima1231.lojaAPI.dto.Vendedor.VendedorRequestDTO;
 import io.github.nakashima1231.lojaAPI.dto.Vendedor.VendedorResponseDTO;
 import io.github.nakashima1231.lojaAPI.entities.Vendedor;
+import io.github.nakashima1231.lojaAPI.exceptions.*;
 import io.github.nakashima1231.lojaAPI.repository.VendedorRepository;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ public class VendedorService {
     private final VendedorRepository repository;
 
     private Vendedor buscarEntidade(Long id) {
-        return repository.findById(id).orElseThrow(() -> new RuntimeException("Nao existe um vendedor com este id: " + id));
+        return repository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Nao existe um vendedor com este id: " + id));
     }
 
     public List<VendedorResponseDTO> listarTodos() {
@@ -24,17 +25,17 @@ public class VendedorService {
     }
 
     public VendedorResponseDTO buscarPorId(Long id) {
-        return repository.findByIdAndAtivoTrue(id).map(VendedorResponseDTO::new).orElseThrow(() -> new RuntimeException("Nao existe um vendedor com este id: " + id));
+        return repository.findByIdAndAtivoTrue(id).map(VendedorResponseDTO::new).orElseThrow(() -> new RecursoNaoEncontradoException("Nao existe um vendedor com este id: " + id));
     }
 
     @Transactional
     public VendedorResponseDTO criarVendedor(VendedorRequestDTO dados) {
         if(repository.existsByEmail(dados.email())) {
-            throw new RuntimeException("Ja existe um vendedor com este email!");
+            throw new RecursoNaoEncontradoException("Ja existe um vendedor com este email!");
         }
 
         if(repository.existsByMatricula(dados.matricula())) {
-            throw new RuntimeException("Ja existe um vendedor com esta matricula");
+            throw new RecursoNaoEncontradoException("Ja existe um vendedor com esta matricula");
         }
 
         Vendedor vendedor = new Vendedor();
@@ -54,11 +55,11 @@ public class VendedorService {
         Vendedor vendedor = buscarEntidade(id);
 
         if(repository.existsByEmailAndIdNot(dados.email(), id)) {
-            throw new RuntimeException("Ja existe um vendedor com este email!");
+            throw new RecursoNaoEncontradoException("Ja existe um vendedor com este email!");
         }
 
         if(repository.existsByMatriculaAndIdNot(dados.matricula(), id)) {
-            throw new RuntimeException("Ja existe um vendedor com esta matricula!");
+            throw new RecursoNaoEncontradoException("Ja existe um vendedor com esta matricula!");
         }
 
         vendedor.setNome(dados.nome());
