@@ -18,6 +18,7 @@ public record ClienteRequestDTO(
         @Email
         String email,
 
+        @Pattern(regexp = "\\d{10,11}", message = "Telefone deve ter DDD + número, só dígitos (10 ou 11)")
         String telefone
 ) {
 

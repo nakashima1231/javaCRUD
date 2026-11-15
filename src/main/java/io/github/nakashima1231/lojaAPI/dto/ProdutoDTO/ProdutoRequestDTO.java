@@ -10,6 +10,7 @@ public record ProdutoRequestDTO(
         @Size(max = 100)
         String nome,
 
+        @Size(max = 200)
         String descricao,
 
         @NotNull
