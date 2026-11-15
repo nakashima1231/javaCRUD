@@ -61,12 +61,22 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErroResponseDTO> tratarJsonInvalido(HttpMessageNotReadableException ex) {
         if (ex.getCause() instanceof MismatchedInputException mie && !mie.getPath().isEmpty()) {
             String campo = mie.getPath().getLast().getPropertyName();
-            String tipo = mie.getTargetType() != null ? mie.getTargetType().getSimpleName() : "desconhecido";
+            String tipo = mudarTipo(mie.getTargetType().getSimpleName());
+
 
             return montarErro(HttpStatus.BAD_REQUEST,
                     "Campo '" + campo + "' com tipo inválido. Esperado: " + tipo);
         }
         return montarErro(HttpStatus.BAD_REQUEST, "JSON mal formatado");
+    }
+
+    private String mudarTipo(String padrao) {
+        return switch (padrao) {
+            case "BigDecimal", "Integer", "Double", "Long" -> "numero";
+            case "String" -> "texto";
+            case "Boolean" -> "booleano";
+            default -> padrao;
+        };
     }
 
 
