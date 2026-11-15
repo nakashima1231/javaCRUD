@@ -5,7 +5,6 @@ import io.github.nakashima1231.lojaAPI.dto.ClienteDTO.ClienteResponseDTO;
 import io.github.nakashima1231.lojaAPI.entities.Cliente;
 import io.github.nakashima1231.lojaAPI.exceptions.*;
 import io.github.nakashima1231.lojaAPI.repository.ClienteRepository;
-import io.github.nakashima1231.lojaAPI.util.CpfValidator;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,10 +35,6 @@ public class ClienteService {
     //post
     @Transactional
     public ClienteResponseDTO criarCliente(ClienteRequestDTO dados) {
-        if(!CpfValidator.validarCpf(dados.cpf())) {
-            throw new RegraNegocioException("CPF invalido");
-        }
-
         if(repository.existsByCpf(dados.cpf())) {
             throw new ConflitoException("Ja existe um cliente com este cpf");
         }
@@ -65,10 +60,6 @@ public class ClienteService {
     @Transactional
     public ClienteResponseDTO atualizar(ClienteRequestDTO dados, Long id) {
         Cliente cliente = buscarEntidade(id);
-
-        if(!CpfValidator.validarCpf(dados.cpf())) {
-            throw new RegraNegocioException("CPF invalido");
-        }
 
         if(repository.existsByEmailAndIdNot(dados.email(), id)) {
             throw new ConflitoException("Ja existe um cliente com este email");

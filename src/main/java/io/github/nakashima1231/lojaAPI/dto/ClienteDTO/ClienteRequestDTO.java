@@ -12,7 +12,7 @@ public record ClienteRequestDTO(
         @NotBlank
         @Size(min = 11, max = 11)
         @Pattern(regexp = "\\d{11}", message = "CPF deve conter 11 números")
-        //@CPF
+        @CPF
         String cpf,
 
         @NotBlank

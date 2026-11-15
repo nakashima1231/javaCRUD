@@ -31,11 +31,11 @@ public class VendedorService {
     @Transactional
     public VendedorResponseDTO criarVendedor(VendedorRequestDTO dados) {
         if(repository.existsByEmail(dados.email())) {
-            throw new RecursoNaoEncontradoException("Ja existe um vendedor com este email!");
+            throw new ConflitoException("Ja existe um vendedor com este email!");
         }
 
         if(repository.existsByMatricula(dados.matricula())) {
-            throw new RecursoNaoEncontradoException("Ja existe um vendedor com esta matricula");
+            throw new ConflitoException("Ja existe um vendedor com esta matricula");
         }
 
         Vendedor vendedor = new Vendedor();
@@ -55,11 +55,11 @@ public class VendedorService {
         Vendedor vendedor = buscarEntidade(id);
 
         if(repository.existsByEmailAndIdNot(dados.email(), id)) {
-            throw new RecursoNaoEncontradoException("Ja existe um vendedor com este email!");
+            throw new ConflitoException("Ja existe um vendedor com este email!");
         }
 
         if(repository.existsByMatriculaAndIdNot(dados.matricula(), id)) {
-            throw new RecursoNaoEncontradoException("Ja existe um vendedor com esta matricula!");
+            throw new ConflitoException("Ja existe um vendedor com esta matricula!");
         }
 
         vendedor.setNome(dados.nome());
