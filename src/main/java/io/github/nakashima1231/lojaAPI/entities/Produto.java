@@ -21,9 +21,8 @@ public class Produto {
     private String nome;
     private String descricao;
     private BigDecimal preco;
-    private int quantidadeEstoque;
     private boolean ativo;
-
+    private int quantidadeEstoque;
 
     public void baixarEstoque(int quantidade) {
         if (this.quantidadeEstoque < quantidade) {
@@ -33,6 +32,9 @@ public class Produto {
     }
 
     public void reporEstoque(int quantidade) {
+        if (quantidade <= 0) {
+            throw new IllegalArgumentException("Quantidade deve ser positiva");
+        }
         this.quantidadeEstoque += quantidade;
     }
 }
