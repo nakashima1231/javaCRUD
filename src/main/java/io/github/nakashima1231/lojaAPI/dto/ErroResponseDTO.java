@@ -20,14 +20,5 @@ public record ErroResponseDTO(
         this(status, mensagem, timestamp, null);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErroResponseDTO> tratarValidacao(MethodArgumentNotValidException ex) {
-        List<CampoErroDTO> erros = ex.getBindingResult().getFieldErrors().stream()
-                /* transforme cada FieldError em CampoErroDTO */
-                .map(fieldError -> new CampoErroDTO(fieldError.getField(), fieldError.getDefaultMessage()))
-                .toList();
 
-        ErroResponseDTO erro = new ErroResponseDTO(400, "Dados inválidos", LocalDateTime.now(), erros);
-        return ResponseEntity.badRequest().body(erro);
-    }
 }
