@@ -80,10 +80,12 @@ public class VendaService {
     }
 
 
+    @Transactional(readOnly = true)
     public List<VendaResponseDTO> listarTodos() {
         return repository.findAll().stream().map(VendaResponseDTO::new).toList();
     }
 
+    @Transactional(readOnly = true)
     public VendaResponseDTO buscarPorId(Long id) {
         return new VendaResponseDTO(buscarEntidade(id));
     }

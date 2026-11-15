@@ -34,7 +34,7 @@ public class VendaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(venda);
     }
 
-    @DeleteMapping("/{id}")
+    @PatchMapping("/{id}/cancelar")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         service.cancelar(id);
         return ResponseEntity.noContent().build(); // Retorna Status 204

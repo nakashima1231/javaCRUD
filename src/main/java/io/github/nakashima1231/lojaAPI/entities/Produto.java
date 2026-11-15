@@ -25,6 +25,8 @@ public class Produto {
     private int quantidadeEstoque;
 
     public void baixarEstoque(int quantidade) {
+        estoqueNegativo(quantidade);
+
         if (this.quantidadeEstoque < quantidade) {
             throw new RuntimeException("Estoque insuficiente para o produto: " + this.nome);
         }
@@ -32,9 +34,13 @@ public class Produto {
     }
 
     public void reporEstoque(int quantidade) {
+        estoqueNegativo(quantidade);
+        this.quantidadeEstoque += quantidade;
+    }
+
+    private void estoqueNegativo(int quantidade) {
         if (quantidade <= 0) {
             throw new IllegalArgumentException("Quantidade deve ser positiva");
         }
-        this.quantidadeEstoque += quantidade;
     }
 }
