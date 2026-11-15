@@ -30,18 +30,13 @@ public class VendaController {
 
     @PostMapping
     public ResponseEntity<VendaResponseDTO> criar(@RequestBody @Valid VendaRequestDTO dados) {
-        VendaResponseDTO cliente = service.criarVenda(dados);
-        return ResponseEntity.status(HttpStatus.CREATED).body(cliente);
-    }
-
-    @PutMapping("/{id}")
-    public VendaResponseDTO atualizar(@RequestBody @Valid VendaRequestDTO dados, @PathVariable Long id) {
-        return service.atualizar(dados, id);
+        VendaResponseDTO venda = service.criarVenda(dados);
+        return ResponseEntity.status(HttpStatus.CREATED).body(venda);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        service.deletar(id);
+        service.cancelar(id);
         return ResponseEntity.noContent().build(); // Retorna Status 204
     }
 
