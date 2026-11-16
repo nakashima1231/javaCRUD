@@ -24,7 +24,11 @@ public class AdminInicial implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if(usuarioRepository.existsByEmail(email)) {
+        if (senha == null || senha.isBlank()) {
+            throw new IllegalStateException("ADMIN_SENHA não configurada");
+        }
+
+        if(usuarioRepository.existsByPerfil(Perfil.ADMIN)) {
             return;
         }
 
