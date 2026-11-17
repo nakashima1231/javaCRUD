@@ -1,7 +1,7 @@
 package io.github.nakashima1231.lojaAPI.exceptions;
 
-import io.github.nakashima1231.lojaAPI.dto.CampoErroDTO;
-import io.github.nakashima1231.lojaAPI.dto.ErroResponseDTO;
+import io.github.nakashima1231.lojaAPI.dto.erro.CampoErroDTO;
+import io.github.nakashima1231.lojaAPI.dto.erro.ErroResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -72,6 +72,15 @@ public class GlobalExceptionHandler {
         return montarErro(HttpStatus.BAD_REQUEST, "JSON mal formatado");
     }
 
+    @ExceptionHandler(CredenciaisInvalidasException.class)
+    public ResponseEntity<ErroResponseDTO> credenciaisErradas(Exception ex) {
+        return montarErro(HttpStatus.UNAUTHORIZED, ex.getMessage());
+    }
+
+
+
+
+
     private String mudarTipo(String padrao) {
         return switch (padrao) {
             case "BigDecimal", "Integer", "int", "Long", "long", "Double", "double" -> "número";
@@ -80,9 +89,4 @@ public class GlobalExceptionHandler {
             default -> padrao;
         };
     }
-
-
-
-
-
 }

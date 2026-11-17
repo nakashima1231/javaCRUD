@@ -28,6 +28,10 @@ public class AdminInicial implements CommandLineRunner {
             throw new IllegalStateException("ADMIN_SENHA não configurada");
         }
 
+        if (email == null || email.isBlank()) {
+            throw new IllegalStateException("ADMIN_email não configurada");
+        }
+
         if(usuarioRepository.existsByPerfil(Perfil.ADMIN)) {
             return;
         }

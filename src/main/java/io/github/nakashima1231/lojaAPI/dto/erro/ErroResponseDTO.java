@@ -1,9 +1,6 @@
-package io.github.nakashima1231.lojaAPI.dto;
+package io.github.nakashima1231.lojaAPI.dto.erro;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
 import java.util.List;
