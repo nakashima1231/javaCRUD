@@ -18,5 +18,4 @@ public interface VendedorRepository extends JpaRepository<Vendedor, Long> {
     List<Vendedor> findByAtivoTrue();
     Optional<Vendedor> findByIdAndAtivoTrue(Long id);
 
-    Optional<Vendedor> finbyEmail(String email);
 }

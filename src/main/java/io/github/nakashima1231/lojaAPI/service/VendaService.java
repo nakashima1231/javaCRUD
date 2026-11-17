@@ -5,10 +5,7 @@ import io.github.nakashima1231.lojaAPI.dto.Venda.VendaRequestDTO;
 import io.github.nakashima1231.lojaAPI.dto.Venda.VendaResponseDTO;
 import io.github.nakashima1231.lojaAPI.entities.*;
 import io.github.nakashima1231.lojaAPI.exceptions.*;
-import io.github.nakashima1231.lojaAPI.repository.ClienteRepository;
-import io.github.nakashima1231.lojaAPI.repository.ProdutoRepository;
-import io.github.nakashima1231.lojaAPI.repository.VendaRepository;
-import io.github.nakashima1231.lojaAPI.repository.VendedorRepository;
+import io.github.nakashima1231.lojaAPI.repository.*;
 import io.github.nakashima1231.lojaAPI.util.Status;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +23,7 @@ public class VendaService {
     private final ClienteRepository clienteRepository;
     private final VendedorRepository vendedorRepository;
     private final ProdutoRepository produtoRepository;
+    private final UsuarioRepository usuarioRepository;
 
     private void adicionarItens(Venda venda, List<ItemRequestDTO> itensDTO) {
         for (ItemRequestDTO itemDTO : itensDTO) {
@@ -62,7 +60,12 @@ public class VendaService {
         // 1. VALIDAR (e já buscar)
         Cliente cliente = buscarClienteAtivo(dados.clienteId());
 
-        Vendedor vendedor = vendedorRepository.finbyEmail(email).orElseThrow(() -> new RecursoNaoEncontradoException("Vendedor nao encontrado"));;
+
+        Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(() -> new RegraNegocioException("Usuario nao esta vinculado a algum vendedor"));
+        Vendedor vendedor = usuario.getVendedor();
+        if (vendedor == null) {
+            throw new RegraNegocioException("Usuário não está vinculado a um vendedor");
+        }
 
         Venda venda = new Venda();
         venda.setCliente(cliente);
