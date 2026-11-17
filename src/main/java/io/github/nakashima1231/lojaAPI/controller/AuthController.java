@@ -20,9 +20,4 @@ public class AuthController {
         return service.login(dados);
     }
 
-    @GetMapping("/eu")
-    public String eu(Authentication autenticacao) {
-        return autenticacao == null ? "ninguém logado" : autenticacao.getName() + " " + autenticacao.getAuthorities();
-    }
-
 }
