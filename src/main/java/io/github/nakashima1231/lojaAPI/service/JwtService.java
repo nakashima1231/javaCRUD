@@ -1,6 +1,7 @@
 package io.github.nakashima1231.lojaAPI.service;
 
 import io.github.nakashima1231.lojaAPI.entities.Usuario;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -31,5 +32,13 @@ public class JwtService {
                 .expiration(new Date(System.currentTimeMillis() + expiracao))
                 .signWith(key)
                 .compact();
+    }
+
+    public Claims validarToken(String token) {
+        return Jwts.parser()
+                .verifyWith(key)        // confere a assinatura com a MESMA chave
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 }

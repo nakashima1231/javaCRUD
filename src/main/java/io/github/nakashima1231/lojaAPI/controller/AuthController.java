@@ -5,6 +5,7 @@ import io.github.nakashima1231.lojaAPI.dto.login.TokenResponseDTO;
 import io.github.nakashima1231.lojaAPI.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,6 +18,11 @@ public class AuthController {
     @PostMapping("/login")
     public TokenResponseDTO login(@RequestBody @Valid LoginRequestDTO dados) {
         return service.login(dados);
+    }
+
+    @GetMapping("/eu")
+    public String eu(Authentication autenticacao) {
+        return autenticacao == null ? "ninguém logado" : autenticacao.getName() + " " + autenticacao.getAuthorities();
     }
 
 }
