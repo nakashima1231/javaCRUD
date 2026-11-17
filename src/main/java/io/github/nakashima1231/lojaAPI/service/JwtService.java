@@ -9,23 +9,27 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Date;
 
 @Service
-@RequiredArgsConstructor
 public class JwtService {
+    private final SecretKey key;
 
-    public String gerarToken(Usuario usuario){
-        SecretKey key = Keys.hmacShaKeyFor("${app.jwt.secret}".getBytes(StandardCharsets.UTF_8));
+    private final Long expiracao;
 
+    public JwtService(@Value("${app.jwt.secret}") String secret, @Value("${app.jwt.expiracao}") Duration expiracao) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.expiracao = expiracao.toMillis();
+    }
+
+    public String gerarToken(Usuario usuario) {
         return Jwts.builder()
                 .subject(usuario.getEmail())
+                .claim("perfil", usuario.getPerfil().name())
                 .issuedAt(new Date())
-                .claim("perfil", usuario.getPerfil())
-                .expiration(new Date(System.currentTimeMillis() + 3600000))
+                .expiration(new Date(System.currentTimeMillis() + expiracao))
                 .signWith(key)
                 .compact();
     }
-
-
 }
