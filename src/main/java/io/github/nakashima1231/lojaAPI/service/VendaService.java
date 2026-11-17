@@ -57,15 +57,9 @@ public class VendaService {
 
     @Transactional
     public VendaResponseDTO criarVenda(VendaRequestDTO dados, String email) {
-        // 1. VALIDAR (e já buscar)
         Cliente cliente = buscarClienteAtivo(dados.clienteId());
 
-
-        Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(() -> new RegraNegocioException("Usuario nao esta vinculado a algum vendedor"));
-        Vendedor vendedor = usuario.getVendedor();
-        if (vendedor == null) {
-            throw new RegraNegocioException("Usuário não está vinculado a um vendedor");
-        }
+        Vendedor vendedor = buscarVendedorDoUsuario(email);
 
         Venda venda = new Venda();
         venda.setCliente(cliente);
@@ -117,8 +111,20 @@ public class VendaService {
         return clienteRepository.findByIdAndAtivoTrue(id).orElseThrow(() -> new RecursoNaoEncontradoException("Cliente não encontrado ou inativo: " + id));
     }
 
-    private Vendedor buscarVendedorAtivo(Long id) {
-        return vendedorRepository.findByIdAndAtivoTrue(id).orElseThrow(() -> new RecursoNaoEncontradoException("Vendedor não encontrado ou inativo: " + id));
+
+    private Vendedor buscarVendedorDoUsuario(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new CredenciaisInvalidasException());
+
+        Vendedor vendedor = usuario.getVendedor();
+
+        if (vendedor == null) {
+            throw new RegraNegocioException("Usuário não está vinculado a um vendedor");
+        }
+        if (!vendedor.isAtivo()) {
+            throw new RegraNegocioException("Vendedor inativo não pode registrar vendas");
+        }
+        return vendedor;
     }
 
 
