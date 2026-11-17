@@ -73,7 +73,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(CredenciaisInvalidasException.class)
-    public ResponseEntity<ErroResponseDTO> credenciaisErradas(Exception ex) {
+    public ResponseEntity<ErroResponseDTO> credenciaisErradas(CredenciaisInvalidasException ex) {
         return montarErro(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 

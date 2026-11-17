@@ -14,17 +14,17 @@ import org.springframework.stereotype.Service;
 public class AuthService {
     private final UsuarioRepository repository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     public TokenResponseDTO login(LoginRequestDTO dados) {
-        Usuario usuario = repository.findByEmail(dados.email());
-        if(usuario == null) {
-            throw new CredenciaisInvalidasException("Email ou senha incorreto");
-        }
+        Usuario usuario = repository.findByEmail(dados.email())
+                .orElseThrow(() -> new CredenciaisInvalidasException());
 
         if(!passwordEncoder.matches(dados.senha(), usuario.getSenha())) {
-            throw new CredenciaisInvalidasException("Email ou senha incorreto");
+            throw new CredenciaisInvalidasException();
         }
-        return new TokenResponseDTO();
+
+        return new TokenResponseDTO(jwtService.gerarToken(usuario));
     }
 
 }
