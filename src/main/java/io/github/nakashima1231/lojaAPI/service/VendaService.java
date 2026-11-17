@@ -58,11 +58,11 @@ public class VendaService {
     }
 
     @Transactional
-    public VendaResponseDTO criarVenda(VendaRequestDTO dados) {
+    public VendaResponseDTO criarVenda(VendaRequestDTO dados, String email) {
         // 1. VALIDAR (e já buscar)
         Cliente cliente = buscarClienteAtivo(dados.clienteId());
 
-        Vendedor vendedor = buscarVendedorAtivo(dados.vendedorId());
+        Vendedor vendedor = vendedorRepository.finbyEmail(email).orElseThrow(() -> new RecursoNaoEncontradoException("Vendedor nao encontrado"));;
 
         Venda venda = new Venda();
         venda.setCliente(cliente);

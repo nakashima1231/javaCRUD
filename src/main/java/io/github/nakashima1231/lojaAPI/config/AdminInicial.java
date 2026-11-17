@@ -33,7 +33,6 @@ public class AdminInicial implements CommandLineRunner {
         }
 
         if(usuarioRepository.existsByPerfil(Perfil.ADMIN)) {
-            System.out.println("MINHA SENHA 123456: " + passwordEncoder.encode("123456"));
             return;
         }
 

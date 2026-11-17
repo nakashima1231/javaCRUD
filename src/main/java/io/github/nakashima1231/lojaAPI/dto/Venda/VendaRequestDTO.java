@@ -11,9 +11,6 @@ public record VendaRequestDTO(
         @NotNull
         Long clienteId,
 
-        @NotNull
-        Long vendedorId,
-
         @NotEmpty
         @Valid
         List<ItemRequestDTO> itens
