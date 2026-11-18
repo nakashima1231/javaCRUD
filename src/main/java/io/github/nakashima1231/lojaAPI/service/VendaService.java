@@ -8,14 +8,11 @@ import io.github.nakashima1231.lojaAPI.exceptions.*;
 import io.github.nakashima1231.lojaAPI.repository.*;
 import io.github.nakashima1231.lojaAPI.util.Perfil;
 import io.github.nakashima1231.lojaAPI.util.Status;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.nio.file.AccessDeniedException;
-import java.rmi.AccessException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -94,13 +91,12 @@ public class VendaService {
     public void cancelar(Long id, String email) {
         Venda venda = buscarEntidade(id);
 
-        Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new CredenciaisInvalidasException());
+        Usuario usuario = buscarUsuario(email);
 
         if (usuario.getPerfil() == Perfil.VENDEDOR) {
-            Vendedor vendedor = buscarVendedorDoUsuario(email);
+            Vendedor vendedor = vendedorDoUsuario(usuario);
 
-            if(vendedor != usuario.getVendedor()) {
+            if(!venda.getVendedor().getId().equals(vendedor.getId())) {
                 throw new AcessoNegadoException();
             }
 
@@ -125,11 +121,7 @@ public class VendaService {
         return clienteRepository.findByIdAndAtivoTrue(id).orElseThrow(() -> new RecursoNaoEncontradoException("Cliente não encontrado ou inativo: " + id));
     }
 
-
-    private Vendedor buscarVendedorDoUsuario(String email) {
-        Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new CredenciaisInvalidasException());
-
+    private Vendedor vendedorDoUsuario(Usuario usuario) {
         Vendedor vendedor = usuario.getVendedor();
 
         if (vendedor == null) {
@@ -138,7 +130,13 @@ public class VendaService {
         if (!vendedor.isAtivo()) {
             throw new RegraNegocioException("Vendedor inativo não pode realizar operações de venda");
         }
+
         return vendedor;
+    }
+
+    private Usuario buscarUsuario(String email) {
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new CredenciaisInvalidasException());
     }
 
 
