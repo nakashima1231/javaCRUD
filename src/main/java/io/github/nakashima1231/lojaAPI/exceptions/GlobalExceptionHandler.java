@@ -79,7 +79,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AcessoNegadoException.class)
     public ResponseEntity<ErroResponseDTO> acessoNegado(AcessoNegadoException ex) {
-        return montarErro(HttpStatus.FORBIDDEN, "Você não tem permissão para esta operacação");
+        return montarErro(HttpStatus.FORBIDDEN, ex.getMessage());
     }
 
 

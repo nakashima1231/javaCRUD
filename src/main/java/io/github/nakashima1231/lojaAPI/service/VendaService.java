@@ -58,7 +58,7 @@ public class VendaService {
     public VendaResponseDTO criarVenda(VendaRequestDTO dados, String email) {
         Cliente cliente = buscarClienteAtivo(dados.clienteId());
 
-        Vendedor vendedor = buscarVendedorDoUsuario(email);
+        Vendedor vendedor = vendedorDoUsuario(buscarUsuario(email));
 
         Venda venda = new Venda();
         venda.setCliente(cliente);
