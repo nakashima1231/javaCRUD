@@ -6,9 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 import tools.jackson.databind.exc.MismatchedInputException;
 
 import java.time.LocalDateTime;
@@ -80,6 +83,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AcessoNegadoException.class)
     public ResponseEntity<ErroResponseDTO> acessoNegado(AcessoNegadoException ex) {
         return montarErro(HttpStatus.FORBIDDEN, ex.getMessage());
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ErroResponseDTO> metodoNaoSuportado(HttpRequestMethodNotSupportedException ex) {
+        return montarErro(HttpStatus.METHOD_NOT_ALLOWED, "Método " + ex.getMethod() + " não é suportado nesta rota");
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErroResponseDTO> metodoNaoSuportado(NoResourceFoundException ex) {
+        return montarErro(HttpStatus.METHOD_NOT_ALLOWED, "Essa rota nao existe");
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErroResponseDTO> metodoNaoSuportado(MethodArgumentTypeMismatchException ex) {
+        return montarErro(HttpStatus.METHOD_NOT_ALLOWED, "Metodo errado");
     }
 
 
