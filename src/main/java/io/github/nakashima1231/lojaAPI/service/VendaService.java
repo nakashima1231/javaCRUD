@@ -6,6 +6,7 @@ import io.github.nakashima1231.lojaAPI.dto.Venda.VendaResponseDTO;
 import io.github.nakashima1231.lojaAPI.entities.*;
 import io.github.nakashima1231.lojaAPI.exceptions.*;
 import io.github.nakashima1231.lojaAPI.repository.*;
+import io.github.nakashima1231.lojaAPI.util.Perfil;
 import io.github.nakashima1231.lojaAPI.util.Status;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.nio.file.AccessDeniedException;
+import java.rmi.AccessException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,7 +24,6 @@ import java.util.List;
 public class VendaService {
     private final VendaRepository repository;
     private final ClienteRepository clienteRepository;
-    private final VendedorRepository vendedorRepository;
     private final ProdutoRepository produtoRepository;
     private final UsuarioRepository usuarioRepository;
 
@@ -89,8 +91,20 @@ public class VendaService {
     }
 
     @Transactional
-    public void cancelar(Long id) {
+    public void cancelar(Long id, String email) {
         Venda venda = buscarEntidade(id);
+
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new CredenciaisInvalidasException());
+
+        if (usuario.getPerfil() == Perfil.VENDEDOR) {
+            Vendedor vendedor = buscarVendedorDoUsuario(email);
+
+            if(vendedor != usuario.getVendedor()) {
+                throw new AcessoNegadoException();
+            }
+
+        }
 
         if (venda.getStatus() == Status.CANCELADA) {
             throw new RegraNegocioException("Venda já está cancelada");
@@ -122,7 +136,7 @@ public class VendaService {
             throw new RegraNegocioException("Usuário não está vinculado a um vendedor");
         }
         if (!vendedor.isAtivo()) {
-            throw new RegraNegocioException("Vendedor inativo não pode registrar vendas");
+            throw new RegraNegocioException("Vendedor inativo não pode realizar operações de venda");
         }
         return vendedor;
     }

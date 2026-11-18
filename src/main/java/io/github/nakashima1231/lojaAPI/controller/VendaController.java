@@ -37,8 +37,8 @@ public class VendaController {
     }
 
     @PatchMapping("/{id}/cancelar")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        service.cancelar(id);
+    public ResponseEntity<Void> cancelar(@PathVariable Long id, @AuthenticationPrincipal String email) {
+        service.cancelar(id, email);
         return ResponseEntity.noContent().build(); // Retorna Status 204
     }
 
