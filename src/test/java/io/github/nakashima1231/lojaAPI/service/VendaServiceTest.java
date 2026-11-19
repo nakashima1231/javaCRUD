@@ -2,6 +2,7 @@ package io.github.nakashima1231.lojaAPI.service;
 
 import io.github.nakashima1231.lojaAPI.dto.ItemVenda.ItemRequestDTO;
 import io.github.nakashima1231.lojaAPI.dto.Venda.VendaRequestDTO;
+import io.github.nakashima1231.lojaAPI.dto.Venda.VendaResponseDTO;
 import io.github.nakashima1231.lojaAPI.entities.*;
 import io.github.nakashima1231.lojaAPI.exceptions.AcessoNegadoException;
 import io.github.nakashima1231.lojaAPI.exceptions.RegraNegocioException;
@@ -206,6 +207,81 @@ class VendaServiceTest {
         assertThat(produto.getQuantidadeEstoque()).isEqualTo(8);
 
         verify(repository).save(any());
+    }
+
+    @Test
+    void criarVenda_valorTotalCorreto_criaVenda() {
+        Cliente cliente = new Cliente();
+        cliente.setId(1L);
+
+        Produto produto = new Produto();
+        produto.setId(5L);
+        produto.setNome("Teclado");
+        produto.setPreco(new BigDecimal("10.00"));
+        produto.setQuantidadeEstoque(10);
+
+        when(clienteRepository.findByIdAndAtivoTrue(1L)).thenReturn(Optional.of(cliente));
+        when(usuarioRepository.findByEmail("a@loja.com")).thenReturn(Optional.of(usuario));
+        when(produtoRepository.findByIdAndAtivoTrue(5L)).thenReturn(Optional.of(produto));
+
+        VendaRequestDTO pedido = new VendaRequestDTO(
+                1L,
+                List.of(new ItemRequestDTO(5L, 2))
+        );
+
+        VendaResponseDTO venda = service.criarVenda(pedido, "a@loja.com");
+
+        assertThat(venda.valorTotal()).isEqualByComparingTo("20.00");
+        verify(repository).save(any());
+    }
+
+    @Test
+    void criarVenda_vendedorInativo_lancaRegraNegocioException() {
+        vendedor.setAtivo(false);
+
+        Cliente cliente = new Cliente();
+        cliente.setId(1L);
+
+        Produto produto = new Produto();
+        produto.setId(5L);
+        produto.setNome("Teclado");
+        produto.setPreco(new BigDecimal("10.00"));
+        produto.setQuantidadeEstoque(10);
+
+        when(clienteRepository.findByIdAndAtivoTrue(1L)).thenReturn(Optional.of(cliente));
+        when(usuarioRepository.findByEmail("a@loja.com")).thenReturn(Optional.of(usuario));
+
+        VendaRequestDTO pedido = new VendaRequestDTO(
+                1L,
+                List.of(new ItemRequestDTO(5L, 2))
+        );
+
+        assertThatThrownBy(() -> service.criarVenda(pedido,"a@loja.com"))
+                .isInstanceOf(RegraNegocioException.class);
+
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    void criarVenda_adminSemVendedor_lancaRegraNegocioException() {
+        Usuario admin = new Usuario();
+        admin.setPerfil(Perfil.ADMIN);
+
+        Cliente cliente = new Cliente();
+        cliente.setId(1L);
+
+        when(clienteRepository.findByIdAndAtivoTrue(1L)).thenReturn(Optional.of(cliente));
+        when(usuarioRepository.findByEmail("admin@loja.com")).thenReturn(Optional.of(admin));
+
+        VendaRequestDTO pedido = new VendaRequestDTO(
+                1L,
+                List.of(new ItemRequestDTO(5L, 2))
+        );
+
+        assertThatThrownBy(() -> service.criarVenda(pedido,"admin@loja.com"))
+                .isInstanceOf(RegraNegocioException.class);
+
+        verify(repository, never()).save(any());
     }
 
 
