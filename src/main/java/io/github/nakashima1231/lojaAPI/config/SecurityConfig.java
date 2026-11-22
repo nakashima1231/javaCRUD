@@ -38,6 +38,7 @@ public class SecurityConfig {
                                 escreverErro(response, HttpStatus.FORBIDDEN, "Acesso negado"))
                 )
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
 
                         .requestMatchers("/admin/**").hasRole("ADMIN")
