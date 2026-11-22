@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -100,6 +101,11 @@ public class GlobalExceptionHandler {
         return montarErro(HttpStatus.METHOD_NOT_ALLOWED, "Metodo errado");
     }
 
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ErroResponseDTO> conflitoConcorrencia(ObjectOptimisticLockingFailureException ex) {
+        return montarErro(HttpStatus.CONFLICT,
+                "O registro foi alterado por outra operação. Tente novamente.");
+    }
 
 
 
